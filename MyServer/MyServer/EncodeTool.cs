@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 /// <summary>
@@ -62,6 +63,54 @@ namespace MyServer
                     cache.AddRange(br.ReadBytes(remainLengthAgain));
                     return data;
                 }
+            }
+        }
+
+
+        public static NetMsg DecodeMsg(byte[] packet)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// 把NetMsg类转换成字节数组，发送出去
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public static byte[] EncodeMsg(NetMsg msg)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    bw.Write(msg.opCode);
+                    bw.Write(msg.subCode);
+                    if (msg.value != null)
+                    {
+                        bw.Write(EncodeObj(msg.value));
+                    }
+
+                    byte[] data = new byte[ms.Length];
+                    Buffer.BlockCopy(ms.GetBuffer(), 0, data, 0, (int)ms.Length);
+                    return data;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 序列化
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private static byte[] EncodeObj(object obj)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(ms, obj);
+                byte[] data = new byte[ms.Length];
+                Buffer.BlockCopy(ms.GetBuffer(), 0, data, 0, (int)ms.Length);
+                return data;
             }
         }
 

@@ -84,6 +84,8 @@ namespace MyServer
             client.clientSocket = e.AcceptSocket;
 
             Console.WriteLine(client.clientSocket.RemoteEndPoint + "客户端链接成功");
+            //开始接收数据
+            StartReceive(client);
             //接收消息 继续开启等待下一个用户接入
             e.AcceptSocket = null;
             StartAccept(e);
@@ -162,6 +164,15 @@ namespace MyServer
                     }
                 }
             }
+        }
+        /// <summary>
+        /// 一条消息处理完成后的回调
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="msg"></param>
+        private void ReceiveProcessCompleted(ClientPeer client, NetMsg msg)
+        {
+            //TODO
         }
         #endregion
         #region 断开链接
